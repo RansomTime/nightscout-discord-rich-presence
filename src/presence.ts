@@ -16,7 +16,7 @@ export const rpcReady = new Promise(resolve => {
 })
 
 export const setActivity = (data: IParsedData, config: IConfig) => {
-  const state = `${data.value} (${data.direction})`
+  const state = `${data.value} (${data.delta} ${data.direction})`
   const buttons: any[] = []
   if (config.displayNightscoutSite) {
     buttons.push({
