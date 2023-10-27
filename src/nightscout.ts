@@ -91,6 +91,7 @@ export const humanUnits = (unit: IConfig['units']) =>
 export interface IParsedData {
   value: string
   direction: string
+  delta: string
 
   alert?: IAlert
 }
@@ -102,26 +103,34 @@ interface IAlert {
   image: string
 }
 
+export const getUnit = (unit: string) => {
+  if (unit === 'mmol') {
+    return UNIT_MMOL
+  }
+  return UNIT_MGDL
+}
+
 export const parseData = (data: INightscoutData, config: IConfig) => {
   const isMmol = config.units === 'mmol'
-  const lowerBound = isMmol ? mgdlToMmol(config.lowValue) : config.lowValue
-  const upperBound = isMmol ? mgdlToMmol(config.highValue) : config.highValue
 
-  const rawUnits = isMmol ? mgdlToMmol(data.sgv) : data.sgv
-  const units = isMmol ? rawUnits.toFixed(1) : rawUnits.toFixed(0)
+  const units = isMmol ? mgdlToMmol(data.sgv).toFixed(1) : data.sgv.toFixed(0)
+  const delta = isMmol
+    ? mgdlToMmol(data.delta).toFixed(1)
+    : data.delta.toFixed(0)
 
   const parsed: IParsedData = {
+    delta: `${delta}`,
     direction: directionArrow(data.direction),
-    value: isMmol ? `${units} ${UNIT_MMOL}` : `${units} ${UNIT_MGDL}`,
+    value: `${units} ${getUnit(config.units)}`,
   }
 
-  if (rawUnits <= lowerBound) {
+  if (data.sgv <= config.lowValue) {
     parsed.alert = {
       image: RPC_IMG_LOW,
       text: RPC_STR_LOW_ALERT,
       type: 'low',
     }
-  } else if (rawUnits >= upperBound) {
+  } else if (data.sgv >= config.highValue) {
     parsed.alert = {
       image: RPC_IMG_HIGH,
       text: RPC_STR_HIGH_ALERT,
