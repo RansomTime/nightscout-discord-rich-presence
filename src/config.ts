@@ -49,7 +49,7 @@ const validateConfig = (config: IConfig) => {
   return true
 }
 
-let lastConfig: yaml.ast.Document | null = null
+let lastConfig: yaml.Document | null = null
 
 export const loadConfig: () => Promise<[IConfig, boolean]> = async () => {
   let isDefault = false
