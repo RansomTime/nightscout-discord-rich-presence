@@ -11,7 +11,7 @@ import { IParsedData } from './nightscout'
 DiscordRPC.register(RPC_CLIENT_ID)
 const rpc = new DiscordRPC.Client({ transport: 'ipc' })
 
-export const rpcReady = new Promise(resolve => {
+export const rpcReady = new Promise<void>(resolve => {
   rpc.on('ready', () => resolve())
 })
 
